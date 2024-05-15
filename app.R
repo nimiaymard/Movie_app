@@ -1,4 +1,3 @@
-library(shiny)
 library(leaflet)
 library(ggplot2)
 library(dplyr)
@@ -182,6 +181,9 @@ server <- function(input, output, session){
                  fillOpacity = 0.8, popup = ~paste("Âge Mère: ", AGEMERE, "<br>", "Département: ", DEPDOM))
   })
   
+  output$dataSummary <- renderDataTable({
+    datatable(filtered_data(), options = list(pageLength = 5))
+  })
 }
 # Run the application
 shinyApp(ui, server)
