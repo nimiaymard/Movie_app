@@ -2,6 +2,9 @@ library(leaflet)
 library(ggplot2)
 library(dplyr)
 library(DT)
+library(shiny)
+
+
 
 # UI setup
 ui <- fluidPage(
@@ -81,6 +84,7 @@ ui <- fluidPage(
                   choices = c("Analyse Temporelle", "Distribution Géographique", 
                               "Analyse Démographique",  
                               "Prédiction des Tendances", "Diversité Culturelle")),
+      selectInput("sexe", "Choisissez le sexe:", choices = c("Tous" = "Tous", "Masculin" = "1", "Féminin" = "2")),
       conditionalPanel(
         condition = "input.analysisType === 'Prédiction des Tendances'",
         numericInput("futureMonths", "Nombre de mois à prédire:", min = 1, max = 12, value = 3)
@@ -117,7 +121,8 @@ server <- function(input, output, session){
   filtered_data <- reactive({
     data() %>%
       filter(AGEMERE >= input$ageRange[1], AGEMERE <= input$ageRange[2],
-             DEPDOM == input$departement)
+             DEPDOM == input$departement,
+             if (input$sexe != "Tous") SEXE == input$sexe else TRUE)
   })
   
   output$mainPlot <- renderPlot({
